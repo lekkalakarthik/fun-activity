@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>One Important Question 💖</title>
+  <title>My Valentine 💖</title>
 
   <style>
     * {
@@ -18,7 +18,7 @@
       justify-content: center;
       align-items: center;
       font-family: "Segoe UI", sans-serif;
-      background: radial-gradient(circle, #ff9a9e, #fad0c4);
+      background: linear-gradient(135deg, #ff758c, #ff7eb3);
       overflow: hidden;
     }
 
@@ -27,9 +27,9 @@
       padding: 30px;
       border-radius: 20px;
       width: 90%;
-      max-width: 380px;
+      max-width: 400px;
       text-align: center;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.25);
       animation: pop 0.6s ease;
     }
 
@@ -39,23 +39,24 @@
     }
 
     h1 {
-      color: #ff4d6d;
+      color: #e63946;
       margin-bottom: 10px;
     }
 
     p {
       color: #444;
       font-size: 16px;
+      line-height: 1.4;
     }
 
     .buttons {
-      margin-top: 25px;
+      margin-top: 30px;
       position: relative;
-      height: 140px;
+      height: 160px;
     }
 
     button {
-      padding: 14px 26px;
+      padding: 14px 28px;
       font-size: 16px;
       border: none;
       border-radius: 50px;
@@ -68,7 +69,7 @@
     }
 
     #yesBtn {
-      background: #38b000;
+      background: #2ec4b6;
       color: white;
     }
 
@@ -76,8 +77,8 @@
       background: #ff595e;
       color: white;
       position: absolute;
-      left: 120px;
-      top: 70px;
+      left: 140px;
+      top: 90px;
     }
 
     .hint {
@@ -99,18 +100,18 @@
   <canvas id="confetti"></canvas>
 
   <div class="card" id="card">
-    <h1>Hey ❤️</h1>
+    <h1>Hey Lekkala Rashmitha ❤️</h1>
     <p>
-      I have a small but important question for you.<br>
-      Will you accept this offer? 😌
+      This invite is sent by <b>Lekkala Karthik</b> 💌<br><br>
+      Will you be my <b>Valentine</b>? 🌹
     </p>
 
     <div class="buttons">
       <button id="yesBtn">Yes 💖</button>
-      <button id="noBtn">No 🙄</button>
+      <button id="noBtn">No 🙈</button>
     </div>
 
-    <div class="hint">(Try clicking “No” 😏)</div>
+    <div class="hint">(Try pressing “No” 😏)</div>
   </div>
 
   <audio id="yesSound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
@@ -121,12 +122,21 @@
     const card = document.getElementById("card");
     const yesSound = document.getElementById("yesSound");
 
-    // Move NO button anywhere on screen
+    const noMessages = [
+      "No? 😒 Try again!",
+      "Not allowed 😜",
+      "Nice try 😏",
+      "You know the answer 💕",
+      "Hehe… caught you 😄"
+    ];
+
     function moveNoButton() {
       const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
       const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
       noBtn.style.left = x + "px";
       noBtn.style.top = y + "px";
+
+      noBtn.textContent = noMessages[Math.floor(Math.random() * noMessages.length)];
     }
 
     noBtn.addEventListener("mouseenter", moveNoButton);
@@ -137,10 +147,11 @@
       startConfetti();
 
       card.innerHTML = `
-        <h1>Yay!!! 🎉💖</h1>
+        <h1>Yayyy!!! 💖🎉</h1>
         <p>
-          I knew you’d say yes 😄<br>
-          Best decision ever!
+          You just made me the happiest husband 😍<br><br>
+          Happy Valentine’s Day, my love ❤️<br>
+          — Karthik
         </p>
       `;
     });
@@ -148,15 +159,14 @@
     /* Confetti */
     const canvas = document.getElementById("confetti");
     const ctx = canvas.getContext("2d");
-
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    let confettiPieces = [];
+    let confetti = [];
 
     function startConfetti() {
       for (let i = 0; i < 200; i++) {
-        confettiPieces.push({
+        confetti.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
           r: Math.random() * 6 + 4,
@@ -168,10 +178,10 @@
 
     function drawConfetti() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      confettiPieces.forEach(p => {
+      confetti.forEach(p => {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `hsl(${Math.random()*360},100%,60%)`;
+        ctx.fillStyle = `hsl(${Math.random() * 360},100%,60%)`;
         ctx.fill();
         p.y += p.d;
         if (p.y > canvas.height) p.y = 0;
