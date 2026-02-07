@@ -18,6 +18,7 @@ body {
 }
 .card {
   background:white;
+  position: relative; /* important for button inside */
   padding:28px;
   border-radius:22px;
   width:92%;
@@ -42,7 +43,13 @@ p {color:#444;font-size:15px;line-height:1.5;}
 button {padding:14px 30px;font-size:16px;border:none;border-radius:50px;cursor:pointer;transition:transform 0.2s;}
 button:active {transform:scale(0.92);}
 #yesBtn {background:#2ec4b6;color:white;}
-#noBtn {background:#ff595e;color:white;position:absolute;left:50%;top:100px;transform:translateX(-50%);}
+#noBtn {
+  background:#ff595e;color:white;
+  position:absolute;
+  top:100px;
+  left:50%;
+  transform:translateX(-50%);
+}
 .hint {font-size:12px;margin-top:8px;color:#888;}
 canvas {position:fixed;top:0;left:0;pointer-events:none;}
 </style>
@@ -59,10 +66,10 @@ canvas {position:fixed;top:0;left:0;pointer-events:none;}
   <div class="photo">👨</div>
 </div>
 <p>
-  This invite is sent with all my love 💌<br>
-  by <b>Lekkala Karthik</b>.<br><br>
-  You are my best friend, my forever.<br><br>
-  Will you be my <b>Valentine</b>? 🌹
+This invite is sent with all my love 💌<br>
+by <b>Lekkala Karthik</b>.<br><br>
+You are my best friend, my forever.<br><br>
+Will you be my <b>Valentine</b>? 🌹
 </p>
 <div class="buttons">
   <button id="yesBtn">Yes 💖</button>
@@ -82,29 +89,23 @@ const card = document.getElementById("card");
 const music = document.getElementById("bgMusic");
 const noMessages = ["Nope 😜","Still no? 😏","Nice try ❤️","You know you love me 😍","Haha… not allowed 😄"];
 
-function moveNo() {
-  const padding = 20;
-  const cardRect = card.getBoundingClientRect();
-  const maxX = window.innerWidth - noBtn.offsetWidth - padding;
-  const maxY = window.innerHeight - noBtn.offsetHeight - padding;
-  let x, y;
-  let attempts = 0;
+function moveNo(){
+  const padding = 10; // safe margin inside card
+  const cardWidth = card.clientWidth;
+  const cardHeight = card.clientHeight;
 
-  do {
-    x = Math.random() * maxX + padding;
-    y = Math.random() * maxY + padding;
-    attempts++;
-    if(attempts>50) break; // safety in tiny screens
-  } while (
-    x + noBtn.offsetWidth > cardRect.left &&
-    x < cardRect.right &&
-    y + noBtn.offsetHeight > cardRect.top &&
-    y < cardRect.bottom
-  );
+  const maxX = cardWidth - noBtn.offsetWidth - padding;
+  const maxY = cardHeight - noBtn.offsetHeight - padding;
+
+  // Random position inside card
+  const x = Math.random() * maxX + padding;
+  const y = Math.random() * maxY + padding;
 
   noBtn.style.transition = "left 0.15s ease, top 0.15s ease";
   noBtn.style.left = `${x}px`;
   noBtn.style.top = `${y}px`;
+
+  // Change text
   noBtn.textContent = noMessages[Math.floor(Math.random()*noMessages.length)];
 }
 
@@ -126,14 +127,9 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 let confetti = [];
 
-function startConfetti() {
+function startConfetti(){
   for(let i=0;i<220;i++){
-    confetti.push({
-      x:Math.random()*canvas.width,
-      y:Math.random()*canvas.height,
-      r:Math.random()*6+4,
-      d:Math.random()*5+1
-    });
+    confetti.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*6+4,d:Math.random()*5+1});
   }
   requestAnimationFrame(drawConfetti);
 }
@@ -145,13 +141,13 @@ function drawConfetti(){
     ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
     ctx.fillStyle=`hsl(${Math.random()*360},100%,65%)`;
     ctx.fill();
-    p.y+=p.d;
+    p.y += p.d;
     if(p.y>canvas.height) p.y=0;
   });
   requestAnimationFrame(drawConfetti);
 }
 
-window.addEventListener("resize", ()=>{
+window.addEventListener("resize",()=>{
   canvas.width=window.innerWidth;
   canvas.height=window.innerHeight;
 });
