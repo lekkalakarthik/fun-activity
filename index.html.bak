@@ -19,28 +19,49 @@ body {
 .card {
   background:white;
   position: relative;
-  padding:28px;
+  padding:40px;
   border-radius:22px;
   width:90%;
-  max-width:600px;
-  min-height:400px;
+  max-width:700px;
+  min-height:500px;
   text-align:center;
   box-shadow:0 25px 50px rgba(0,0,0,0.25);
   display:flex;
   flex-direction:column;
   justify-content:center;
   align-items:center;
+  overflow: hidden;
 }
-h1 {color:#e63946;margin-bottom:10px;}
-p {color:#444;font-size:15px;line-height:1.5;}
-.photos {display:flex;justify-content:center;gap:10px;margin:15px 0;}
-.photo {width:80px;height:80px;border-radius:50%;background:#ffe5ec;display:flex;align-items:center;justify-content:center;font-size:30px;}
-.buttons {margin-top:25px;position:relative;height:120px;width:100%;display:flex;justify-content:center;align-items:center;}
-button {padding:14px 30px;font-size:16px;border:none;border-radius:50px;cursor:pointer;transition:transform 0.2s;}
+h1 {color:#e63946;margin-bottom:20px;font-size:2.2rem;}
+p {color:#444;font-size:18px;line-height:1.6;margin:10px 0;}
+.photos {display:flex;justify-content:center;gap:15px;margin:25px 0;}
+.photo {
+  width:90px;
+  height:90px;
+  border-radius:50%;
+  background:#ffe5ec;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+.photo img {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.buttons {margin-top:40px;position:relative;height:150px;width:100%;display:flex;justify-content:center;align-items:center;}
+button {padding:16px 40px;font-size:18px;border:none;border-radius:50px;cursor:pointer;transition:transform 0.2s;font-weight:bold;}
 button:active {transform:scale(0.92);}
-#yesBtn {background:#2ec4b6;color:white;position:relative;z-index:1;}
-#noBtn {background:#ff595e;color:white;position:absolute;z-index:2;}
-.hint {font-size:12px;margin-top:8px;color:#888;}
+#yesBtn {background:#2ec4b6;color:white;position:relative;z-index:1;box-shadow:0 5px 15px rgba(46, 196, 182, 0.3);}
+#noBtn {background:#ff595e;color:white;position:absolute;z-index:2;box-shadow:0 5px 15px rgba(255, 89, 94, 0.3);}
+.hint {font-size:14px;margin-top:15px;color:#888;font-style:italic;}
+.heart-beat {animation: heartbeat 1.2s infinite;display:inline-block;}
+@keyframes heartbeat {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
 canvas {position:fixed;top:0;left:0;pointer-events:none;}
 </style>
 </head>
@@ -49,23 +70,32 @@ canvas {position:fixed;top:0;left:0;pointer-events:none;}
 <canvas id="confetti"></canvas>
 
 <div class="card" id="card">
-<h1>Hey Lekkala Rashmitha ❤️</h1>
+<h1>Hey Rashmi <span class="heart-beat">❤️</span></h1>
 <div class="photos">
-  <div class="photo">👩</div>
+  <div class="photo">
+    <img src="images/rashmi.jpg" alt="Rashmi">
+  </div>
   <div class="photo">❤️</div>
-  <div class="photo">👨</div>
+  <div class="photo">
+    <img src="images/karthik.jpg" alt="Karthik">
+  </div>
 </div>
 <p>
-This invite is sent with all my love 💌<br>
-by <b>Lekkala Karthik</b>.<br><br>
-You are my best friend, my forever.<br><br>
-Will you be my <b>Valentine</b>? 🌹
+Happy Valentine's Day, my love! 💖<br><br>
+Every moment with you is a beautiful story I never want to end.<br>
+From our laughter to our quiet moments, you make every day brighter.<br><br>
+You are:<br>
+• My favorite hello 🌟<br>
+• My hardest goodbye 💫<br>
+• My forever and always 📖<br><br>
+Being with you feels like home, and my heart is happiest when it’s with you.<br>
+Will you be my Valentine, now and forever? 🌹
 </p>
 <div class="buttons">
-  <button id="yesBtn">Yes 💖</button>
+  <button id="yesBtn">Yes, Forever! 💖</button>
   <button id="noBtn">No 🙈</button>
 </div>
-<div class="hint">(Try pressing "No" 😏)</div>
+<div class="hint">(Try pressing "No" - I dare you! 😏)</div>
 </div>
 
 <audio id="bgMusic" loop>
@@ -77,108 +107,71 @@ const noBtn = document.getElementById("noBtn");
 const yesBtn = document.getElementById("yesBtn");
 const card = document.getElementById("card");
 const music = document.getElementById("bgMusic");
-const noMessages = ["Nope 😜","Still no? 😏","Nice try ❤️","You know you love me 😍","Haha… not allowed 😄"];
+const noMessages = ["Nice try! 😜","Still thinking? 😏","You know you want to say yes! ❤️","Haha… I'm not giving up! 😄","Too late! You're stuck with me! 😘"];
 
 function moveNo() {
-  const padding = 15;
+  const padding = 20;
   const btnWidth = noBtn.offsetWidth;
   const btnHeight = noBtn.offsetHeight;
-  
-  // Get the buttons container dimensions
   const buttonsContainer = noBtn.parentElement;
   const containerWidth = buttonsContainer.clientWidth;
   const containerHeight = buttonsContainer.clientHeight;
-  
-  // Get Yes button position (centered)
   const yesBtnRect = yesBtn.getBoundingClientRect();
   const containerRect = buttonsContainer.getBoundingClientRect();
-  
-  // Calculate Yes button position relative to container
   const yesBtnX = yesBtnRect.left - containerRect.left;
   const yesBtnY = yesBtnRect.top - containerRect.top;
   const yesBtnWidth = yesBtn.offsetWidth;
   const yesBtnHeight = yesBtn.offsetHeight;
-  
-  // Define clear safe zones where "No" can go without overlapping "Yes"
-  // We'll create positions in the four quadrants around the "Yes" button
-  
-  const safePositions = [];
-  
-  // Position 1: Top-left quadrant (above and to the left of Yes)
-  safePositions.push({
-    x: padding,
-    y: padding
+
+  const safePositions = [
+    {x: padding, y: padding, area: "top"},
+    {x: containerWidth - btnWidth - padding, y: padding, area: "top"},
+    {x: containerWidth*0.25 - btnWidth/2, y: padding, area:"top"},
+    {x: containerWidth*0.75 - btnWidth/2, y: padding, area:"top"},
+    {x: yesBtnX - btnWidth - padding, y: padding, area:"top"},
+    {x: yesBtnX + yesBtnWidth + padding, y: padding, area:"top"},
+    {x: padding, y: (containerHeight-btnHeight)/2, area:"middle"},
+    {x: containerWidth-btnWidth-padding, y:(containerHeight-btnHeight)/2, area:"middle"},
+    {x: padding, y:containerHeight-btnHeight-padding, area:"bottom"},
+    {x: containerWidth-btnWidth-padding, y:containerHeight-btnHeight-padding, area:"bottom"},
+    {x: containerWidth*0.25-btnWidth/2, y:containerHeight-btnHeight-padding, area:"bottom"},
+    {x: containerWidth*0.75-btnWidth/2, y:containerHeight-btnHeight-padding, area:"bottom"}
+  ];
+
+  const nonOverlappingPositions = safePositions.filter(pos=>{
+    const noLeft=pos.x,noRight=pos.x+btnWidth,noTop=pos.y,noBottom=pos.y+btnHeight;
+    const yesLeft=yesBtnX,yesRight=yesBtnX+yesBtnWidth,yesTop=yesBtnY,yesBottom=yesBtnY+yesBtnHeight;
+    return !(noLeft<yesRight && noRight>yesLeft && noTop<yesBottom && noBottom>yesTop);
   });
-  
-  // Position 2: Top-right quadrant (above and to the right of Yes)
-  safePositions.push({
-    x: containerWidth - btnWidth - padding,
-    y: padding
-  });
-  
-  // Position 3: Bottom-left quadrant (below and to the left of Yes)
-  safePositions.push({
-    x: padding,
-    y: containerHeight - btnHeight - padding
-  });
-  
-  // Position 4: Bottom-right quadrant (below and to the right of Yes)
-  safePositions.push({
-    x: containerWidth - btnWidth - padding,
-    y: containerHeight - btnHeight - padding
-  });
-  
-  // Position 5: Middle-left (left side of container, vertical center)
-  safePositions.push({
-    x: padding,
-    y: (containerHeight - btnHeight) / 2
-  });
-  
-  // Position 6: Middle-right (right side of container, vertical center)
-  safePositions.push({
-    x: containerWidth - btnWidth - padding,
-    y: (containerHeight - btnHeight) / 2
-  });
-  
-  // Filter out positions that would overlap with Yes button
-  const nonOverlappingPositions = safePositions.filter(pos => {
-    // Check if this position would overlap with Yes button
-    const noLeft = pos.x;
-    const noRight = pos.x + btnWidth;
-    const noTop = pos.y;
-    const noBottom = pos.y + btnHeight;
-    
-    const yesLeft = yesBtnX;
-    const yesRight = yesBtnX + yesBtnWidth;
-    const yesTop = yesBtnY;
-    const yesBottom = yesBtnY + yesBtnHeight;
-    
-    // Check for overlap - if rectangles don't overlap, return true
-    return !(noLeft < yesRight && 
-             noRight > yesLeft && 
-             noTop < yesBottom && 
-             noBottom > yesTop);
-  });
-  
-  // If we have non-overlapping positions, use one
-  if (nonOverlappingPositions.length > 0) {
-    const randomPos = nonOverlappingPositions[Math.floor(Math.random() * nonOverlappingPositions.length)];
-    noBtn.style.left = `${randomPos.x}px`;
-    noBtn.style.top = `${randomPos.y}px`;
+
+  const topPositions = nonOverlappingPositions.filter(p=>p.area==="top");
+  const middlePositions = nonOverlappingPositions.filter(p=>p.area==="middle");
+  const bottomPositions = nonOverlappingPositions.filter(p=>p.area==="bottom");
+
+  let selectedPositions;
+  const random=Math.random();
+  if(topPositions.length>0 && random<0.5) selectedPositions=topPositions;
+  else if(middlePositions.length>0 && random<0.75) selectedPositions=middlePositions;
+  else if(bottomPositions.length>0) selectedPositions=bottomPositions;
+  else selectedPositions=nonOverlappingPositions;
+
+  if(selectedPositions && selectedPositions.length>0){
+    const randomPos = selectedPositions[Math.floor(Math.random()*selectedPositions.length)];
+    noBtn.style.left=`${randomPos.x}px`;
+    noBtn.style.top=`${randomPos.y}px`;
   } else {
-    // Fallback: Use corners (should always be safe)
     const corners = [
-      {x: padding, y: padding},
-      {x: containerWidth - btnWidth - padding, y: padding},
-      {x: padding, y: containerHeight - btnHeight - padding},
-      {x: containerWidth - btnWidth - padding, y: containerHeight - btnHeight - padding}
+      {x:padding,y:padding},
+      {x:containerWidth-btnWidth-padding,y:padding},
+      {x:padding,y:containerHeight-btnHeight-padding},
+      {x:containerWidth-btnWidth-padding,y:containerHeight-btnHeight-padding}
     ];
-    const corner = corners[Math.floor(Math.random() * corners.length)];
-    noBtn.style.left = `${corner.x}px`;
-    noBtn.style.top = `${corner.y}px`;
+    const corner=corners[Math.floor(Math.random()*corners.length)];
+    noBtn.style.left=`${corner.x}px`;
+    noBtn.style.top=`${corner.y}px`;
   }
-  
-  noBtn.textContent = noMessages[Math.floor(Math.random() * noMessages.length)];
+
+  noBtn.textContent=noMessages[Math.floor(Math.random()*noMessages.length)];
 }
 
 noBtn.addEventListener("mouseenter", moveNo);
@@ -187,10 +180,22 @@ noBtn.addEventListener("touchstart", moveNo);
 yesBtn.addEventListener("click", ()=>{
   music.play();
   startConfetti();
-  card.innerHTML = `<h1>She Said YES 💖</h1>
-  <p>Thank you for choosing me, again and again 😍<br><br>
-  Happy Valentine's Day, my love ❤️<br>
-  Forever yours,<br><b>Karthik</b></p>`;
+  card.innerHTML = `<h1>She Said YES! 💖</h1>
+  <div class="photos">
+    <div class="photo"><img src="images/rashmi.jpg" alt="Rashmi"></div>
+    <div class="photo">💑</div>
+    <div class="photo"><img src="images/karthik.jpg" alt="Karthik"></div>
+  </div>
+  <p>
+  Thank you for saying yes, my love! 😍<br><br>
+  Every day with you is a treasure, and I can’t wait to create countless more memories together.<br>
+  You make my heart full, my life joyful, and my soul complete.<br><br>
+  Happy Valentine’s Day, my forever ❤️<br>
+  Always yours,<br><b>Karthik</b>
+  </p>
+  <div style="margin-top:20px;font-size:16px;color:#666;">
+    P.S. This moment is now a memory we’ll cherish forever 💝
+  </div>`;
 });
 
 const canvas = document.getElementById("confetti");
@@ -224,8 +229,7 @@ window.addEventListener("resize",()=>{
   canvas.height=window.innerHeight;
 });
 
-// Initialize button position
-setTimeout(moveNo, 100);
+setTimeout(moveNo,100);
 </script>
 
 </body>
