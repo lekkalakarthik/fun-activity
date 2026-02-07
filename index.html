@@ -1,98 +1,183 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Special Offer 😄</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>One Important Question 💖</title>
+
   <style>
+    * {
+      box-sizing: border-box;
+      user-select: none;
+    }
+
     body {
-      height: 100vh;
       margin: 0;
+      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      color: white;
+      font-family: "Segoe UI", sans-serif;
+      background: radial-gradient(circle, #ff9a9e, #fad0c4);
+      overflow: hidden;
     }
 
     .card {
-      background: rgba(0, 0, 0, 0.3);
-      padding: 40px;
-      border-radius: 12px;
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 380px;
       text-align: center;
-      position: relative;
-      width: 400px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      animation: pop 0.6s ease;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
     }
 
     h1 {
-      margin-bottom: 20px;
+      color: #ff4d6d;
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: #444;
+      font-size: 16px;
     }
 
     .buttons {
-      margin-top: 30px;
+      margin-top: 25px;
       position: relative;
-      height: 80px;
+      height: 140px;
     }
 
     button {
-      padding: 12px 24px;
+      padding: 14px 26px;
       font-size: 16px;
       border: none;
-      border-radius: 8px;
+      border-radius: 50px;
       cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    button:active {
+      transform: scale(0.9);
     }
 
     #yesBtn {
-      background-color: #4CAF50;
+      background: #38b000;
       color: white;
     }
 
     #noBtn {
-      background-color: #f44336;
+      background: #ff595e;
       color: white;
       position: absolute;
+      left: 120px;
+      top: 70px;
     }
 
-    .success {
-      font-size: 22px;
-      color: #00ffcc;
+    .hint {
+      font-size: 12px;
+      margin-top: 10px;
+      color: #888;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
     }
   </style>
 </head>
 <body>
 
+  <canvas id="confetti"></canvas>
+
   <div class="card" id="card">
-    <h1>Hey! 😎</h1>
-    <p>I’m sending you this special offer.<br>Will you accept it?</p>
+    <h1>Hey ❤️</h1>
+    <p>
+      I have a small but important question for you.<br>
+      Will you accept this offer? 😌
+    </p>
 
     <div class="buttons">
-      <button id="yesBtn">Yes 👍</button>
-      <button id="noBtn">No 👎</button>
+      <button id="yesBtn">Yes 💖</button>
+      <button id="noBtn">No 🙄</button>
     </div>
+
+    <div class="hint">(Try clicking “No” 😏)</div>
   </div>
+
+  <audio id="yesSound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
 
   <script>
     const noBtn = document.getElementById("noBtn");
     const yesBtn = document.getElementById("yesBtn");
     const card = document.getElementById("card");
+    const yesSound = document.getElementById("yesSound");
 
-    noBtn.addEventListener("mouseover", () => {
-      const maxX = card.offsetWidth - noBtn.offsetWidth;
-      const maxY = card.offsetHeight - noBtn.offsetHeight;
+    // Move NO button anywhere on screen
+    function moveNoButton() {
+      const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+      const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+      noBtn.style.left = x + "px";
+      noBtn.style.top = y + "px";
+    }
 
-      const randomX = Math.floor(Math.random() * maxX);
-      const randomY = Math.floor(Math.random() * maxY);
-
-      noBtn.style.left = randomX + "px";
-      noBtn.style.top = randomY + "px";
-    });
+    noBtn.addEventListener("mouseenter", moveNoButton);
+    noBtn.addEventListener("touchstart", moveNoButton);
 
     yesBtn.addEventListener("click", () => {
+      yesSound.play();
+      startConfetti();
+
       card.innerHTML = `
-        <h1 class="success">🎉 Offer Accepted! 🎉</h1>
-        <p>You made the right choice 😄</p>
+        <h1>Yay!!! 🎉💖</h1>
+        <p>
+          I knew you’d say yes 😄<br>
+          Best decision ever!
+        </p>
       `;
     });
+
+    /* Confetti */
+    const canvas = document.getElementById("confetti");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let confettiPieces = [];
+
+    function startConfetti() {
+      for (let i = 0; i < 200; i++) {
+        confettiPieces.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 6 + 4,
+          d: Math.random() * 5 + 1
+        });
+      }
+      requestAnimationFrame(drawConfetti);
+    }
+
+    function drawConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      confettiPieces.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `hsl(${Math.random()*360},100%,60%)`;
+        ctx.fill();
+        p.y += p.d;
+        if (p.y > canvas.height) p.y = 0;
+      });
+      requestAnimationFrame(drawConfetti);
+    }
   </script>
 
 </body>
