@@ -117,7 +117,7 @@
     <div class="hint">(Try pressing “No” 😏)</div>
   </div>
 
-  <!-- Music (plays after interaction) -->
+  <!-- Music -->
   <audio id="bgMusic" loop>
     <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
   </audio>
@@ -137,12 +137,24 @@
     ];
 
     function moveNo() {
-      const padding = 20; // Keep away from edges
+      const padding = 20; // safe distance from edges
+      const cardRect = card.getBoundingClientRect();
+
       const maxX = window.innerWidth - noBtn.offsetWidth - padding;
       const maxY = window.innerHeight - noBtn.offsetHeight - padding;
 
-      const x = Math.random() * maxX + padding;
-      const y = Math.random() * maxY + padding;
+      let x, y;
+
+      // Keep moving until it does NOT overlap the card
+      do {
+        x = Math.random() * maxX + padding;
+        y = Math.random() * maxY + padding;
+      } while (
+        x + noBtn.offsetWidth > cardRect.left &&
+        x < cardRect.right &&
+        y + noBtn.offsetHeight > cardRect.top &&
+        y < cardRect.bottom
+      );
 
       noBtn.style.transition = "left 0.15s ease, top 0.15s ease";
       noBtn.style.left = `${x}px`;
@@ -203,7 +215,7 @@
       requestAnimationFrame(drawConfetti);
     }
 
-    // Adjust canvas on window resize
+    // Adjust canvas on resize
     window.addEventListener("resize", () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
