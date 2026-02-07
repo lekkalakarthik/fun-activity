@@ -35,11 +35,11 @@ h1 {color:#e63946;margin-bottom:10px;}
 p {color:#444;font-size:15px;line-height:1.5;}
 .photos {display:flex;justify-content:center;gap:10px;margin:15px 0;}
 .photo {width:80px;height:80px;border-radius:50%;background:#ffe5ec;display:flex;align-items:center;justify-content:center;font-size:30px;}
-.buttons {margin-top:25px;position:relative;height:100px;width:100%;display:flex;justify-content:center;align-items:center;}
+.buttons {margin-top:25px;position:relative;height:120px;width:100%;display:flex;justify-content:center;align-items:center;}
 button {padding:14px 30px;font-size:16px;border:none;border-radius:50px;cursor:pointer;transition:transform 0.2s;}
 button:active {transform:scale(0.92);}
-#yesBtn {background:#2ec4b6;color:white;}
-#noBtn {background:#ff595e;color:white;position:absolute;}
+#yesBtn {background:#2ec4b6;color:white;position:relative;z-index:1;}
+#noBtn {background:#ff595e;color:white;position:absolute;z-index:2;}
 .hint {font-size:12px;margin-top:8px;color:#888;}
 canvas {position:fixed;top:0;left:0;pointer-events:none;}
 </style>
@@ -65,7 +65,7 @@ Will you be my <b>Valentine</b>? 🌹
   <button id="yesBtn">Yes 💖</button>
   <button id="noBtn">No 🙈</button>
 </div>
-<div class="hint">(Try pressing “No” 😏)</div>
+<div class="hint">(Try pressing "No" 😏)</div>
 </div>
 
 <audio id="bgMusic" loop>
@@ -79,23 +79,106 @@ const card = document.getElementById("card");
 const music = document.getElementById("bgMusic");
 const noMessages = ["Nope 😜","Still no? 😏","Nice try ❤️","You know you love me 😍","Haha… not allowed 😄"];
 
-function moveNo(){
-  const padding = 10;
+function moveNo() {
+  const padding = 15;
   const btnWidth = noBtn.offsetWidth;
   const btnHeight = noBtn.offsetHeight;
-
-  // Define area inside card for movement (bottom half)
-  const minX = padding;
-  const maxX = card.clientWidth - btnWidth - padding;
-  const minY = card.clientHeight / 2; // start at middle
-  const maxY = card.clientHeight - btnHeight - padding;
-
-  const x = Math.random() * (maxX - minX) + minX;
-  const y = Math.random() * (maxY - minY) + minY;
-
-  noBtn.style.left = `${x}px`;
-  noBtn.style.top = `${y}px`;
-  noBtn.textContent = noMessages[Math.floor(Math.random()*noMessages.length)];
+  
+  // Get the buttons container dimensions
+  const buttonsContainer = noBtn.parentElement;
+  const containerWidth = buttonsContainer.clientWidth;
+  const containerHeight = buttonsContainer.clientHeight;
+  
+  // Get Yes button position (centered)
+  const yesBtnRect = yesBtn.getBoundingClientRect();
+  const containerRect = buttonsContainer.getBoundingClientRect();
+  
+  // Calculate Yes button position relative to container
+  const yesBtnX = yesBtnRect.left - containerRect.left;
+  const yesBtnY = yesBtnRect.top - containerRect.top;
+  const yesBtnWidth = yesBtn.offsetWidth;
+  const yesBtnHeight = yesBtn.offsetHeight;
+  
+  // Define clear safe zones where "No" can go without overlapping "Yes"
+  // We'll create positions in the four quadrants around the "Yes" button
+  
+  const safePositions = [];
+  
+  // Position 1: Top-left quadrant (above and to the left of Yes)
+  safePositions.push({
+    x: padding,
+    y: padding
+  });
+  
+  // Position 2: Top-right quadrant (above and to the right of Yes)
+  safePositions.push({
+    x: containerWidth - btnWidth - padding,
+    y: padding
+  });
+  
+  // Position 3: Bottom-left quadrant (below and to the left of Yes)
+  safePositions.push({
+    x: padding,
+    y: containerHeight - btnHeight - padding
+  });
+  
+  // Position 4: Bottom-right quadrant (below and to the right of Yes)
+  safePositions.push({
+    x: containerWidth - btnWidth - padding,
+    y: containerHeight - btnHeight - padding
+  });
+  
+  // Position 5: Middle-left (left side of container, vertical center)
+  safePositions.push({
+    x: padding,
+    y: (containerHeight - btnHeight) / 2
+  });
+  
+  // Position 6: Middle-right (right side of container, vertical center)
+  safePositions.push({
+    x: containerWidth - btnWidth - padding,
+    y: (containerHeight - btnHeight) / 2
+  });
+  
+  // Filter out positions that would overlap with Yes button
+  const nonOverlappingPositions = safePositions.filter(pos => {
+    // Check if this position would overlap with Yes button
+    const noLeft = pos.x;
+    const noRight = pos.x + btnWidth;
+    const noTop = pos.y;
+    const noBottom = pos.y + btnHeight;
+    
+    const yesLeft = yesBtnX;
+    const yesRight = yesBtnX + yesBtnWidth;
+    const yesTop = yesBtnY;
+    const yesBottom = yesBtnY + yesBtnHeight;
+    
+    // Check for overlap - if rectangles don't overlap, return true
+    return !(noLeft < yesRight && 
+             noRight > yesLeft && 
+             noTop < yesBottom && 
+             noBottom > yesTop);
+  });
+  
+  // If we have non-overlapping positions, use one
+  if (nonOverlappingPositions.length > 0) {
+    const randomPos = nonOverlappingPositions[Math.floor(Math.random() * nonOverlappingPositions.length)];
+    noBtn.style.left = `${randomPos.x}px`;
+    noBtn.style.top = `${randomPos.y}px`;
+  } else {
+    // Fallback: Use corners (should always be safe)
+    const corners = [
+      {x: padding, y: padding},
+      {x: containerWidth - btnWidth - padding, y: padding},
+      {x: padding, y: containerHeight - btnHeight - padding},
+      {x: containerWidth - btnWidth - padding, y: containerHeight - btnHeight - padding}
+    ];
+    const corner = corners[Math.floor(Math.random() * corners.length)];
+    noBtn.style.left = `${corner.x}px`;
+    noBtn.style.top = `${corner.y}px`;
+  }
+  
+  noBtn.textContent = noMessages[Math.floor(Math.random() * noMessages.length)];
 }
 
 noBtn.addEventListener("mouseenter", moveNo);
@@ -106,7 +189,7 @@ yesBtn.addEventListener("click", ()=>{
   startConfetti();
   card.innerHTML = `<h1>She Said YES 💖</h1>
   <p>Thank you for choosing me, again and again 😍<br><br>
-  Happy Valentine’s Day, my love ❤️<br>
+  Happy Valentine's Day, my love ❤️<br>
   Forever yours,<br><b>Karthik</b></p>`;
 });
 
@@ -140,6 +223,9 @@ window.addEventListener("resize",()=>{
   canvas.width=window.innerWidth;
   canvas.height=window.innerHeight;
 });
+
+// Initialize button position
+setTimeout(moveNo, 100);
 </script>
 
 </body>
