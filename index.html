@@ -3,13 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>My Valentine 💖</title>
+  <title>My Valentine ❤️</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-      user-select: none;
-    }
+    * { box-sizing: border-box; user-select: none; }
 
     body {
       margin: 0;
@@ -24,39 +21,54 @@
 
     .card {
       background: white;
-      padding: 30px;
-      border-radius: 20px;
-      width: 90%;
-      max-width: 400px;
+      padding: 28px;
+      border-radius: 22px;
+      width: 92%;
+      max-width: 420px;
       text-align: center;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+      box-shadow: 0 25px 50px rgba(0,0,0,0.25);
       animation: pop 0.6s ease;
     }
 
     @keyframes pop {
-      from { transform: scale(0.8); opacity: 0; }
+      from { transform: scale(0.85); opacity: 0; }
       to { transform: scale(1); opacity: 1; }
     }
 
-    h1 {
-      color: #e63946;
-      margin-bottom: 10px;
-    }
+    h1 { color: #e63946; margin-bottom: 10px; }
 
     p {
       color: #444;
-      font-size: 16px;
-      line-height: 1.4;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .photos {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 15px 0;
+    }
+
+    .photo {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: #ffe5ec;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
     }
 
     .buttons {
-      margin-top: 30px;
+      margin-top: 25px;
       position: relative;
-      height: 160px;
+      height: 170px;
     }
 
     button {
-      padding: 14px 28px;
+      padding: 14px 30px;
       font-size: 16px;
       border: none;
       border-radius: 50px;
@@ -64,35 +76,17 @@
       transition: transform 0.2s;
     }
 
-    button:active {
-      transform: scale(0.9);
-    }
+    button:active { transform: scale(0.92); }
 
-    #yesBtn {
-      background: #2ec4b6;
-      color: white;
-    }
-
+    #yesBtn { background: #2ec4b6; color: white; }
     #noBtn {
-      background: #ff595e;
-      color: white;
+      background: #ff595e; color: white;
       position: absolute;
-      left: 140px;
-      top: 90px;
+      left: 150px; top: 100px;
     }
 
-    .hint {
-      font-size: 12px;
-      margin-top: 10px;
-      color: #888;
-    }
-
-    canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      pointer-events: none;
-    }
+    .hint { font-size: 12px; margin-top: 8px; color: #888; }
+    canvas { position: fixed; top: 0; left: 0; pointer-events: none; }
   </style>
 </head>
 <body>
@@ -101,8 +95,17 @@
 
   <div class="card" id="card">
     <h1>Hey Lekkala Rashmitha ❤️</h1>
+
+    <div class="photos">
+      <div class="photo">👩</div>
+      <div class="photo">❤️</div>
+      <div class="photo">👨</div>
+    </div>
+
     <p>
-      This invite is sent by <b>Lekkala Karthik</b> 💌<br><br>
+      This invite is sent with all my love 💌<br>
+      by <b>Lekkala Karthik</b>.<br><br>
+      You are my best friend, my forever.<br><br>
       Will you be my <b>Valentine</b>? 🌹
     </p>
 
@@ -114,49 +117,60 @@
     <div class="hint">(Try pressing “No” 😏)</div>
   </div>
 
-  <audio id="yesSound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
+  <!-- Music (plays after interaction) -->
+  <audio id="bgMusic" loop>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+  </audio>
 
   <script>
     const noBtn = document.getElementById("noBtn");
     const yesBtn = document.getElementById("yesBtn");
     const card = document.getElementById("card");
-    const yesSound = document.getElementById("yesSound");
+    const music = document.getElementById("bgMusic");
 
     const noMessages = [
-      "No? 😒 Try again!",
-      "Not allowed 😜",
-      "Nice try 😏",
-      "You know the answer 💕",
-      "Hehe… caught you 😄"
+      "Nope 😜",
+      "Still no? 😏",
+      "Nice try ❤️",
+      "You know you love me 😍",
+      "Haha… not allowed 😄"
     ];
 
-    function moveNoButton() {
-      const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
-      const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
-      noBtn.style.left = x + "px";
-      noBtn.style.top = y + "px";
+    function moveNo() {
+      const padding = 20; // Keep away from edges
+      const maxX = window.innerWidth - noBtn.offsetWidth - padding;
+      const maxY = window.innerHeight - noBtn.offsetHeight - padding;
+
+      const x = Math.random() * maxX + padding;
+      const y = Math.random() * maxY + padding;
+
+      noBtn.style.transition = "left 0.15s ease, top 0.15s ease";
+      noBtn.style.left = `${x}px`;
+      noBtn.style.top = `${y}px`;
 
       noBtn.textContent = noMessages[Math.floor(Math.random() * noMessages.length)];
     }
 
-    noBtn.addEventListener("mouseenter", moveNoButton);
-    noBtn.addEventListener("touchstart", moveNoButton);
+    // Move No button on hover or touch
+    noBtn.addEventListener("mouseenter", moveNo);
+    noBtn.addEventListener("touchstart", moveNo);
 
     yesBtn.addEventListener("click", () => {
-      yesSound.play();
+      music.play();
       startConfetti();
 
       card.innerHTML = `
-        <h1>Yayyy!!! 💖🎉</h1>
+        <h1>She Said YES 💖</h1>
         <p>
-          You just made me the happiest husband 😍<br><br>
+          Thank you for choosing me, again and again 😍<br><br>
           Happy Valentine’s Day, my love ❤️<br>
-          — Karthik
+          Forever yours,<br>
+          <b>Karthik</b>
         </p>
       `;
     });
 
-    /* Confetti */
+    // Confetti
     const canvas = document.getElementById("confetti");
     const ctx = canvas.getContext("2d");
     canvas.width = window.innerWidth;
@@ -165,7 +179,7 @@
     let confetti = [];
 
     function startConfetti() {
-      for (let i = 0; i < 200; i++) {
+      for (let i = 0; i < 220; i++) {
         confetti.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
@@ -181,13 +195,19 @@
       confetti.forEach(p => {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `hsl(${Math.random() * 360},100%,60%)`;
+        ctx.fillStyle = `hsl(${Math.random() * 360},100%,65%)`;
         ctx.fill();
         p.y += p.d;
         if (p.y > canvas.height) p.y = 0;
       });
       requestAnimationFrame(drawConfetti);
     }
+
+    // Adjust canvas on window resize
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
   </script>
 
 </body>
